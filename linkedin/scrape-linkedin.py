@@ -179,8 +179,11 @@ def scrapeWeb(fileName, commaFile):
 
 
 def main():
-    todaysDate = str(datetime.datetime.now().strftime("%Y-%m-%d"))
-    fileName = todaysDate + '-uxr-jobs.html' # 2023-05-16-uxr-jobs.html
+    # if I'm running this the same day I pulled new data, then: 
+    dataDate = str(datetime.datetime.now().strftime("%Y%m%d"))
+    # else:
+    # dataDate = 2023-05-16
+    fileName = todaysDate + '-uxr-jobs.html'
     commaFile = fileName.partition(".")[0]+'.csv'
     scrapeWeb(fileName, commaFile)
     
