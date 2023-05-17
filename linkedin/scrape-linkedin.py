@@ -10,12 +10,16 @@ import errno
 import os
 
 
-def getInfo(fileName):
+def getInfo(dataDate, fileName):
     global timeSinceLastGetHTML
     global numGetHTMLCalls
     numGetHTMLCalls = 0
     startViewingJobNum = 1
     shortURL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20researcher&location=United%20States&refresh=true&sortBy=N"
+    # Seattle only entry-level and associate
+    
+    # Seattle only
+    # https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20researcher&location=Seattle&refresh=true&sortBy=N
     # "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?currentJobId=3590113942&f_T=14292&f_WT=2&geoId=103644278&keywords=ux%20researcher&location=United%20States&refresh=true&sortBy=R&start="
     cont = True
     
@@ -33,7 +37,7 @@ def getInfo(fileName):
             numGetHTMLCalls += 1
             html_bytes = page.read()
             html = html_bytes.decode("utf-8")
-            startNumFileName = str(startViewingJobNum) + fileName
+            startNumFileName = str(startViewingJobNum) + dataDate + "-" + fileName
             with open(startNumFileName, 'w') as file:
                 file.write(html)
         except HTTPError as err:
@@ -44,8 +48,8 @@ def getInfo(fileName):
         cont = False
     
     
-def readInfo(fileName):
-    with open(fileName) as fp:
+def readInfo(dataDate, fileName):
+    with open(dataDate + "-" + fileName) as fp:
         soup = BeautifulSoup(fp, "html.parser")    
     
     myBaseCard = soup.find_all("div", ["base-card"])
@@ -54,7 +58,7 @@ def readInfo(fileName):
     counter = 0
     for eachCard in myBaseCard:
         try:
-            df2 = getJobInfo(eachCard)
+            df2 = getJobInfo(dataDate, eachCard)
         except: 
             continue
         
@@ -66,7 +70,7 @@ def readInfo(fileName):
     
     return df
 
-def getJobInfo(eachCard): 
+def getJobInfo(dataDate, eachCard): 
         # job title
         jobTitle = eachCard.find_all("h3", ["base-search-card__title"])
         assert(len(jobTitle)==1)
@@ -86,7 +90,7 @@ def getJobInfo(eachCard):
         assert(len(jobURL)==1)
         jobURL = jobURL[0]["href"].partition("?")[0]
         miniJobURL = jobURL.split("/")[-1]
-        fileName = miniJobURL + '.html'
+        fileName = dataDate + "/" + miniJobURL + '.html'
         
         try:
             numApplicants, allCriteria, jobDetails, allCriteriaTitles, allCriteriaDetails  = saveJobDetails(jobURL, fileName)
@@ -163,29 +167,32 @@ def getJobDetails(fileName):
         
     return numApplicants, allCriteria, jobDetails, allCriteriaTitles, allCriteriaDetails
 
-def saveInfo(df, fileName):
-    print("PRINTING fileName: ", fileName)
+
+def saveInfo(df, dataDate, fileName):
+    print("PRINTING LOCAL fileName: ", fileName)
+    df.to_csv(fileName)
+    fileName = dataDate + "-" + fileName
+    print("PRINTING BACKUP fileName: ", fileName)
     df.to_csv(fileName)
 
 
-def scrapeWeb(fileName, commaFile):
+def scrapeWeb(dataDate, fileName):
     global timeSinceLastGetHTML
     timeSinceLastGetHTML = datetime.datetime.now()
-    getInfo(fileName)
-    df = readInfo(fileName)
-    saveInfo(df, commaFile)
-    return commaFile
-
+    getInfo(dataDate, fileName)
+    df = readInfo(dataDate, fileName)
+    saveInfo(df, dataDate, fileName.partition(".")[0] + '.csv')
 
 
 def main():
-    # if I'm running this the same day I pulled new data, then: 
-    dataDate = str(datetime.datetime.now().strftime("%Y%m%d"))
-    # else:
-    # dataDate = 2023-05-16
-    fileName = todaysDate + '-uxr-jobs.html'
+    dataDate = str(datetime.datetime.now().strftime("%Y-%m-%d"))
+    # if I'm re-running the script
+    # dataDate = '2023-05-17'
+    # 2023-05-17-uxr-jobs.html
+    fileName = 'uxr-jobs.html'
     commaFile = fileName.partition(".")[0]+'.csv'
-    scrapeWeb(fileName, commaFile)
+    # pdb.set_trace()
+    scrapeWeb(dataDate, fileName)
     
     
 main()
