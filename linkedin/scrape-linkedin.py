@@ -171,7 +171,7 @@ def getJobDetails(fileName):
 def saveInfo(df, dataDate, fileName):
     print("PRINTING LOCAL fileName: ", fileName)
     df.to_csv(fileName)
-    fileName = dataDate + "-" + fileName
+    fileName = dataDate + "/" + dataDate + "-" + fileName
     print("PRINTING BACKUP fileName: ", fileName)
     df.to_csv(fileName)
 
