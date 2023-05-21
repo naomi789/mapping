@@ -8,11 +8,60 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk import FreqDist, Text
+from geopy import geocoders
+import plotly.express as px
+import plotly
 
 
-def analyzeInfo(commaFile):
-    df = pd.read_csv(commaFile)
-    analyzeJobDescription(df)
+def cleanMapData(df, commaFile):
+    gn = geocoders.GeoNames("naomi789")
+    
+    lats = []
+    longs = []
+    oldDF = df
+    jobURLS = df["miniJobURL"]
+    df.set_index("miniJobURL", inplace=True)
+    
+    for jobURL in jobURLS:
+        # df.loc["staff-ux-researcher-at-patreon-3586532759"]["location"]
+        # print("jobURL", jobURL)
+        loc = gn.geocode(df.loc[jobURL]["location"])
+        print(loc)
+        if loc is not None:
+            lats.append(round(loc.latitude, 2))
+            longs.append(round(loc.longitude, 2))
+        else:
+            lats.append(None)
+            longs.append(None)
+            
+    print(lats, longs)
+    
+    df["latitude"] = lats
+    df["longitude"] = longs
+    
+    return saveDF(df, "lat-long-" + commaFile)
+
+def saveDF(df, fileName):
+    df.to_csv(fileName)
+    return df
+
+
+    
+def visualize(df, title):
+    fig = px.scatter_mapbox(
+        df, 
+        lat="latitude", 
+        lon="longitude", 
+#        color="Offense", 
+        hover_data=["miniJobURL", "jobTitle", "companyName"]
+        ).update_layout(
+        mapbox={
+            "style": "carto-positron",
+        },
+    )
+    # fig.show()
+    print('now plotting at time: ', time.ctime())
+    plotly.offline.plot(fig, filename=title)
     
 
 def scrapeWeb(fileName):
@@ -53,7 +102,7 @@ def analyzeJobDescription(df):
         allData += listWords   
     fd = FreqDist(allData)
     
-    pdb.set_trace()
+    
     
 #    text = Text(allData)
 #    text.concordance("quantitative", lines=20)
@@ -70,13 +119,12 @@ def makeNewDF(df):
 
 
 def main():
-    # if I'm running this the same day I pulled new data, then: 
-    todaysDate = str(datetime.datetime.now().strftime("%Y-%m-%d"))
-    # else:
-    # dataDate = 2023-05-16
-    fileName = todaysDate + '-uxr-jobs.html'
-    commaFile = fileName.partition(".")[0]+'.csv'
-    analyzeInfo(commaFile)
-    
+    commaFile = 'uxr-jobs.csv'
+    df = pd.read_csv(commaFile)
+    # analyzeJobDescription(df)
+    # df = cleanMapData(df, commaFile)
+    df = pd.read_csv('lat-long-uxr-jobs.csv')
+    visualize(df, "linkedinmap")
+    pdb.set_trace()
     
 main()
