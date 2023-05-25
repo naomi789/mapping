@@ -189,6 +189,7 @@ def getJobDetails(fileName):
         jobDetails = htmlJobDetails.getText().strip()
     else: 
         jobDetails = None
+        print("unable to get job details for: ", fileName)
     
     
     htmlCriterias = soup.find_all("li", ["description__job-criteria-item"])
@@ -223,7 +224,7 @@ def scrapeWeb(dataDate, fileName):
     timeSinceLastGetHTML = datetime.datetime.now()
     # TODO PAUSE ONCE RUN ONCE PER DAY
     # time.ctime(os.path.getmtime(file))
-    # getInfo(dataDate, fileName)
+    getInfo(dataDate, fileName)
     df = readInfo(dataDate, fileName)
     saveInfo(df, dataDate, fileName.partition(".")[0] + '.csv')
 
