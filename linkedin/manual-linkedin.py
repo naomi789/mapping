@@ -5,7 +5,7 @@ import plotly.express as px
 
 def main():
     df = pd.read_csv('long-col.csv')
-    pdb.set_trace()
+    # pdb.set_trace()
     # df["Date"]=pd.to_datetime(df["Date"])
     
     # only 'UXR; USA' jobs
