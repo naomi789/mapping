@@ -18,6 +18,10 @@ def main():
     df2 = df[df['Job type'].astype(str).str.contains(title)]
     graph(df2, title)
     
+    # only 'Seattle, WA, USA' jobs
+    title = 'Seattle, WA, USA'
+    df2 = df[df['Job type'].astype(str).str.match(title)]
+    graph(df2, title)
     
 def graph(df, title):
     fig = px.line(df, x='Date', y='Openings', color='Job type', markers=True, title=title)
