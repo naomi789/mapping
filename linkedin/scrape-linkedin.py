@@ -45,6 +45,7 @@ def getInfo(dataDate, fileName):
             # save local
             # ensure the local directory exists
             # os.makedirs(os.path.dirname(fileName), exist_ok=True)
+            print(fileName)
             with open(fileName, 'w') as file:
                 file.write(html)
             # print("locally saved all the jobs we pulled: ", fileName)
@@ -183,8 +184,8 @@ def getJobDetails(fileName):
         numApplicants = None
     
     # full job description
-    htmlJobDetails = soup.find("div", "show-more-less-html__markup show-more-less-html__markup--clamp-after-5")
-    # TODO: probably need to say 
+    # htmlJobDetails = soup.find("div", "show-more-less-html__markup show-more-less-html__markup--clamp-after-5")
+    htmlJobDetails = soup.find("div", "show-more-less-html__markup show-more-less-html__markup--clamp-after-5 relative overflow-hidden")
     if htmlJobDetails != None:
         jobDetails = htmlJobDetails.getText().strip()
     else: 
