@@ -8,6 +8,7 @@ from datetime import date, timedelta
 import time
 import errno
 import os.path, time # os
+from pprint import pprint
 
 # NOTES: 
 # os._exit(0)
@@ -78,13 +79,16 @@ def readInfo(dataDate, fileName):
     df = None
     counter = 0
     for eachCard in myBaseCard:
+        counter+=1
+        # print("counter: ", counter)
         try:
             df2 = getJobInfo(dataDate, eachCard)
         except: 
-            print("readInfo(...) failed to getJobInfo(...) for a card")
+            print("readInfo(...) failed to getJobInfo(...) for a card: ")
             # TODO so what should I set df2 = ???
+            continue
             
-        counter+=1
+        
         if counter == 1:
             df = df2
         else:
