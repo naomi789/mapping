@@ -77,10 +77,10 @@ def readInfo(dataDate, fileName):
     myBaseCard = soup.find_all("div", ["base-card"])
     
     df = None
-    counter = 0
+    cardNum = 0
     for eachCard in myBaseCard:
-        counter+=1
-        # print("counter: ", counter)
+        cardNum+=1
+        print("cardNum: ", cardNum)
         try:
             df2 = getJobInfo(dataDate, eachCard)
         except: 
@@ -89,7 +89,7 @@ def readInfo(dataDate, fileName):
             continue
             
         
-        if counter == 1:
+        if cardNum == 1:
             df = df2
         else:
             df = pd.concat([df2, df])
