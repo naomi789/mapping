@@ -132,6 +132,7 @@ def main():
     commaFile = 'uxr-jobs.csv'
     df = pd.read_csv(commaFile)
     # analyzeJobDescription(df)
+    # to create lat-long-uxr-jobs.csv:
     # df = cleanMapData(df, commaFile)
     df = pd.read_csv('lat-long-uxr-jobs.csv')
     visualize(df, "linkedinmap")
