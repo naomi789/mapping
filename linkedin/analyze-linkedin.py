@@ -57,6 +57,12 @@ def visualize(df, title):
         ).update_layout(
         mapbox={
             "style": "carto-positron",
+            "zoom": 3,
+            # center on middle of the US
+            "center": dict(
+            lat=39,
+            lon=-98
+        ),
         },
     )
     # fig.show()
