@@ -85,15 +85,15 @@ def scrapeWeb(fileName):
   
 def processText(df):
     df['jobDetails'].str.lower()
-    df['tokenized'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
+    df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
     
     df['sentences'] = df.apply(lambda row: sent_tokenize(row['jobDetails']), axis=1)
-    df['tokenized'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
+    df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
 
     stops = set(stopwords.words('english'))
     lemmatizer = WordNetLemmatizer()
     listNoStops = []
-    for words in df['tokenized']:
+    for words in df['tokens']:
         noStopwords = [lemmatizer.lemmatize(w.lower()) for w in words if ((w not in stops) and w.isalpha())]
         
         listNoStops.append(noStopwords)
@@ -116,25 +116,27 @@ def articleLength(df):
     plotly.offline.plot(fig, filename='articleLength.html')
 
     
+def uniqueWords(df):
+    pdb.set_trace()
+    
     
 def analyzeJobDescription(df):
     # fd = frequency distribution
-    articleLength(df)
+    # articleLength(df)
+    uniqueWords(df)
     
-    
-    pdb.set_trace()
 
     
 #    text = Text(allData)
 #    text.concordance("quantitative", lines=20)
 
     
-def makeNewDF(df):
-    filtered_sentence = []
-    words = word_tokenize(words)
-    for w in words:
-        filtered_sentence.append(w)
-    return filtered_sentence
+#def makeNewDF(df):
+#    filtered_sentence = []
+#    words = word_tokenize(words)
+#    for w in words:
+#        filtered_sentence.append(w)
+#    return filtered_sentence
 
 
 def main():
