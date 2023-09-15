@@ -26,3 +26,8 @@ UXR; USA`
 #### Terminal set up for `scrape-linkedin.py`
 1. `pip3 install bs4`
 2. You should be good to go for `scrape-linkedin.py`
+
+#### Terminal set up for `analyze-linkedin.py`
+1. `pip3 install nltk`
+2. `pip install geopy`
+3. Make sure you run `df = cleanMapData(df, commaFile)` (in main()) to create `lat-long-uxr-jobs.csv`
