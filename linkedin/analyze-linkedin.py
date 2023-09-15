@@ -11,6 +11,7 @@ from nltk import FreqDist, Text
 from geopy import geocoders
 import plotly.express as px
 import plotly
+import string
 
 
 def cleanMapData(df, commaFile):
@@ -88,7 +89,13 @@ def processText(df):
     df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
     
     df['sentences'] = df.apply(lambda row: sent_tokenize(row['jobDetails']), axis=1)
+    
+    # list of tokens
     df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
+    # tokenized string
+    df['tokenized'] = df['jobDetails'].map(lambda x: x.translate(str.maketrans('', '',string.punctuation)))
+    
+    
 
     stops = set(stopwords.words('english'))
     lemmatizer = WordNetLemmatizer()
@@ -117,14 +124,23 @@ def articleLength(df):
 
     
 def uniqueWords(df):
-    pdb.set_trace()
+    df['uniqueWords'] = df['tokenized'].str.split().apply(lambda x: len(set(x)))
+    fig = px.histogram(df, x="uniqueWords")
+    print('now plotting at time: ', time.ctime())
+    plotly.offline.plot(fig, filename='uniqueWords.html')
+
     
+def wordsRelatedTo(df):
+    # https://www.dataquest.io/blog/tutorial-text-analysis-python-test-hypothesis/
+    pdb.set_trace()
+
+
     
 def analyzeJobDescription(df):
     # fd = frequency distribution
     # articleLength(df)
-    uniqueWords(df)
-    
+    # uniqueWords(df)
+    wordsRelatedTo(df)
 
     
 #    text = Text(allData)
