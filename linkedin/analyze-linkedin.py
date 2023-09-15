@@ -23,16 +23,20 @@ def cleanMapData(df, commaFile):
     df.set_index("miniJobURL", inplace=True)
     
     for jobURL in jobURLS:
-        # df.loc["staff-ux-researcher-at-patreon-3586532759"]["location"]
-        # print("jobURL", jobURL)
         loc = gn.geocode(df.loc[jobURL]["location"])
-        print(loc)
-        if loc is not None:
-            lats.append(round(loc.latitude, 2))
-            longs.append(round(loc.longitude, 2))
-        else:
-            lats.append(None)
-            longs.append(None)
+        try:
+            if loc is not None:
+                lats.append(round(loc.latitude, 2))
+                longs.append(round(loc.longitude, 2))
+                print(loc, " ;", loc.latitude, "; ", loc.longitude, "/n")
+                time.sleep(5)
+            else:
+                lats.append(None)
+                longs.append(None)
+        except: 
+            print("cleanMapData(...) failed to gn.geocode(...) for jobURL: ", jobURL, " in location: ", loc)
+            time.sleep(90)
+            
             
     print(lats, longs)
     
