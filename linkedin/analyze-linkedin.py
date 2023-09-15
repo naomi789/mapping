@@ -83,7 +83,7 @@ def scrapeWeb(fileName):
     return commaFile
 
   
-def cleanData(df):
+def processText(df):
     df['jobDetails'].str.lower()
     df['tokenized'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
     
@@ -99,26 +99,35 @@ def cleanData(df):
         listNoStops.append(noStopwords)
         
     df['noStopsLemmatize'] = listNoStops
-        
     return df
 
-    
-def analyzeJobDescription(df):
-    df = cleanData(df)
-
-    # frequency distribution
+# 
+def frequencyDistribution(df): 
     allData = []
     for listWords in df['noStopsLemmatize']:
         allData += listWords   
     fd = FreqDist(allData)
+    return fd
+
+def articleLength(df):
+    df['articleLength'] = df['noStopsLemmatize'].apply(lambda x: len(x))
+    fig = px.histogram(df, x="articleLength")
+    print('now plotting at time: ', time.ctime())
+    plotly.offline.plot(fig, filename='articleLength.html')
+
     
     
+def analyzeJobDescription(df):
+    # fd = frequency distribution
+    articleLength(df)
+    
+    
+    pdb.set_trace()
+
     
 #    text = Text(allData)
 #    text.concordance("quantitative", lines=20)
-#
-#    pdb.set_trace()
-    
+
     
 def makeNewDF(df):
     filtered_sentence = []
@@ -129,13 +138,15 @@ def makeNewDF(df):
 
 
 def main():
-    commaFile = 'uxr-jobs.csv'
-    df = pd.read_csv(commaFile)
-    # analyzeJobDescription(df)
+#    commaFile = 'uxr-jobs.csv'
+#    df = pd.read_csv(commaFile)
+#     analyzeJobDescription(df)
+    
     # to create lat-long-uxr-jobs.csv:
     # df = cleanMapData(df, commaFile)
-    df = pd.read_csv('lat-long-uxr-jobs.csv')
-    visualize(df, "linkedinmap")
-    pdb.set_trace()
+    df = processText(pd.read_csv('lat-long-uxr-jobs.csv'))
+    # visualize(df, "linkedinmap")
+    analyzeJobDescription(df)
+
     
 main()
