@@ -12,6 +12,8 @@ from geopy import geocoders
 import plotly.express as px
 import plotly
 import string
+import os
+
 
 
 def cleanMapData(df, commaFile):
@@ -44,7 +46,7 @@ def cleanMapData(df, commaFile):
     df["latitude"] = lats
     df["longitude"] = longs
     
-    return saveDF(df, "lat-long-" + commaFile)
+    return saveDF(df, "data/lat-long-" + commaFile)
 
 def saveDF(df, fileName):
     df.to_csv(fileName)
@@ -154,17 +156,29 @@ def analyzeJobDescription(df):
 #        filtered_sentence.append(w)
 #    return filtered_sentence
 
+def readAllData():
+    # https://stackoverflow.com/questions/13131497/os-walk-to-crawl-through-folder-structure
+    # https://stackoverflow.com/questions/68291894/read-all-csv-files-within-the-folder-without-having-a-fixed-name
+    for root, dirs, _ in os.walk("."):
+        for d in dirs:
+            files = [os.path.join(root, d, f) for f in os.listdir(os.path.join(root, d)) if f.endswith(".csv")]
+            if len(files)>0:
+                for f in files:
+                    #read f
+                    continue
+
 
 def main():
-#    commaFile = 'uxr-jobs.csv'
-#    df = pd.read_csv(commaFile)
-#     analyzeJobDescription(df)
+    df = readAllData()
+    commaFile = 'data/uxr-jobs.csv'
+    miniDf = pd.read_csv(commaFile)
+#     analyzeJobDescription(miniDf)
     
-    # to create lat-long-uxr-jobs.csv:
-    # df = cleanMapData(df, commaFile)
-    df = processText(pd.read_csv('lat-long-uxr-jobs.csv'))
-    # visualize(df, "linkedinmap")
-    analyzeJobDescription(df)
+    # to create data/lat-long-uxr-jobs.csv:
+    # miniDf = cleanMapData(miniDf, commaFile)
+    miniDf = processText(miniDf)
+    # visualize(miniDf, "linkedinmap")
+    analyzeJobDescription(miniDf)
 
     
 main()
