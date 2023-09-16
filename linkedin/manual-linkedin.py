@@ -4,7 +4,7 @@ import plotly.express as px
 
 
 def main():
-    df = pd.read_csv("long-col.csv")
+    df = pd.read_csv("data/long-col.csv")
     #    pdb.set_trace()
     df["Date"] = pd.to_datetime(df["Date"])
 
