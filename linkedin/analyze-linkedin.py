@@ -134,7 +134,7 @@ def uniqueWords(df):
     
 def wordsRelatedTo(df):
     # https://www.dataquest.io/blog/tutorial-text-analysis-python-test-hypothesis/
-    pdb.set_trace()
+    return
 
 
     
@@ -159,17 +159,26 @@ def analyzeJobDescription(df):
 def readAllData():
     # https://stackoverflow.com/questions/13131497/os-walk-to-crawl-through-folder-structure
     # https://stackoverflow.com/questions/68291894/read-all-csv-files-within-the-folder-without-having-a-fixed-name
+    allDfs = []
     for root, dirs, _ in os.walk("."):
         for d in dirs:
             files = [os.path.join(root, d, f) for f in os.listdir(os.path.join(root, d)) if f.endswith(".csv")]
             if len(files)>0:
                 for f in files:
-                    #read f
-                    continue
+                    pdb.set_trace()
+                    df = pd.read_csv("data/long-col.csv")
+                    allDfs.append(df)
+    # todo
+    # at this point, allDfs = a list of dataframes
+    # but once I have a SINGLE df
+    # I need to save it to CSV so I don't re-do this every time I run the code lolol
+    # then this file will be done once I: 
+    return processText(df)
+
 
 
 def main():
-    df = readAllData()
+    fullDataFrame = readAllData()
     commaFile = 'data/uxr-jobs.csv'
     miniDf = pd.read_csv(commaFile)
 #     analyzeJobDescription(miniDf)
