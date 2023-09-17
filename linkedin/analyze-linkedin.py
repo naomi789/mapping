@@ -1,4 +1,4 @@
-import pdb 
+import pdb # pdb.set_trace()
 import pandas as pd
 from datetime import date, timedelta
 import datetime
@@ -11,6 +11,7 @@ from nltk import FreqDist, Text
 from geopy import geocoders
 import plotly.express as px
 import plotly
+# from matplotlib import pyplot
 import string
 import os
 
@@ -106,10 +107,17 @@ def processText(df):
 
 
 def frequencyDistribution(df): 
-    allData = []
+    allData = df['noStopsLemmatize'][0]
     for listWords in df['noStopsLemmatize']:
-        allData += listWords   
+        if allData != listWords:
+            allData += listWords 
+    
+    pdb.set_trace()
     fd = FreqDist(allData)
+    # fd.most_common(100)
+    
+    fig = px.histogram(df, x='noStopsLemmatize')
+    plotly.offline.plot(fig, filename='freqDistr.html')
     return fd
 
 def articleLength(df):
@@ -133,10 +141,13 @@ def wordsRelatedTo(df):
 
     
 def analyzeJobDescription(df):
+    # calculate frequency
+    fd = frequencyDistribution(df)
+    
     # fd = frequency distribution
     # articleLength(df)
     # uniqueWords(df)
-    wordsRelatedTo(df)
+    # wordsRelatedTo(df)
 
     
 #    text = Text(allData)
@@ -165,6 +176,11 @@ def readAllData():
 
     return df
 
+def vizCompanyName(df): 
+    fig = px.histogram(df, x='companyName').update_xaxes(categoryorder='total descending')
+    plotly.offline.plot(fig, filename='companyName.html')
+    # 'total ascending'
+
 
 def main():
     # for just 25 jobs & their details: 
@@ -179,8 +195,11 @@ def main():
     # make map in US
     # visualize(df, "linkedinmap.html")
     
+    # companies with listing
+    vizCompanyName(df)
+    
     # run analysis of job decriptions
-    analyzeJobDescription(df)
+    # analyzeJobDescription(df)
 
     
 main()
