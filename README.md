@@ -31,6 +31,7 @@ UXR; USA`
 1. `pip3 install nltk`
 2. `pip install geopy`
 3. Make sure you run `df = cleanMapData(df, commaFile)` (in main()) to create `lat-long-uxr-jobs.csv`
-4. `pip install --user -U nltk`
-5. `pip install --user -U numpy`
-6. Run `python3`, then `import nltk`, `nltk.download('punkt')`, `nltk.download('stopwords')`, `nltk.download('wordnet')`, and then you should be good!!
+4. `pip3 install --user -U nltk`
+5. `pip3 install --user -U numpy`
+6. `pip3 install matplotlib`
+7. Run `python3`, then `import nltk`, `nltk.download('punkt')`, `nltk.download('stopwords')`, `nltk.download('wordnet')`, and then you should be good!!
