@@ -41,10 +41,7 @@ def cleanMapData(df):
         except: 
             print("cleanMapData(...) failed to gn.geocode(...) for jobURL: ", jobURL, " in location: ", loc)
             time.sleep(90)
-            
-            
-    # print(lats, longs)
-    
+                
     df["latitude"] = lats
     df["longitude"] = longs
     
@@ -57,7 +54,6 @@ def visualize(df, title):
         df, 
         lat="latitude", 
         lon="longitude", 
-#        color="Offense", 
         hover_data=["miniJobURL", "jobTitle", "companyName"]
         ).update_layout(
         mapbox={
@@ -70,7 +66,6 @@ def visualize(df, title):
         ),
         },
     )
-    # fig.show()
     print('now plotting at time: ', time.ctime())
     plotly.offline.plot(fig, filename=title)
     
@@ -89,8 +84,6 @@ def processText(df):
     df['jobDetails'] = df['jobDetails'].astype(str)
 
     df['tokens'] = df['jobDetails'].apply(word_tokenize) 
-    
-    # df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
     
     df['sentences'] = df.apply(lambda row: sent_tokenize(row['jobDetails']), axis=1)
     
@@ -149,18 +142,8 @@ def analyzeJobDescription(df):
 #    text = Text(allData)
 #    text.concordance("quantitative", lines=20)
 
-    
-#def makeNewDF(df):
-#    filtered_sentence = []
-#    words = word_tokenize(words)
-#    for w in words:
-#        filtered_sentence.append(w)
-#    return filtered_sentence
 
 def readAllData():
-    # https://stackoverflow.com/questions/13131497/os-walk-to-crawl-through-folder-structure
-    # https://stackoverflow.com/questions/68291894/read-all-csv-files-within-the-folder-without-having-a-fixed-name
-    # allDfs = []
     df = pd.read_csv("uxr-jobs.csv")
     some = df
     for root, dirs, _ in os.walk("."):
@@ -194,7 +177,7 @@ def main():
     df = pd.read_csv('lat-long-all-data.csv')
     
     # make map in US
-    visualize(df, "linkedinmap.html")
+    # visualize(df, "linkedinmap.html")
     
     # run analysis of job decriptions
     analyzeJobDescription(df)
