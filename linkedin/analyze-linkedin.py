@@ -16,7 +16,7 @@ import os
 
 
 
-def cleanMapData(df, commaFile):
+def cleanMapData(df):
     gn = geocoders.GeoNames("naomi789")
     
     lats = []
@@ -28,11 +28,13 @@ def cleanMapData(df, commaFile):
     for jobURL in jobURLS:
         loc = gn.geocode(df.loc[jobURL]["location"])
         try:
-            if loc is not None:
+            if (loc is not None) and (loc != "United States"):
+                time.sleep(1)
                 lats.append(round(loc.latitude, 2))
+                time.sleep(1)
                 longs.append(round(loc.longitude, 2))
-                print(loc, " ;", loc.latitude, "; ", loc.longitude, "/n")
-                time.sleep(5)
+                # print(loc, " ;", loc.latitude, "; ", loc.longitude, "/n")
+                
             else:
                 lats.append(None)
                 longs.append(None)
@@ -41,15 +43,11 @@ def cleanMapData(df, commaFile):
             time.sleep(90)
             
             
-    print(lats, longs)
+    # print(lats, longs)
     
     df["latitude"] = lats
     df["longitude"] = longs
     
-    return saveDF(df, "data/lat-long-" + commaFile)
-
-def saveDF(df, fileName):
-    df.to_csv(fileName)
     return df
 
 
@@ -87,8 +85,12 @@ def scrapeWeb(fileName):
 
   
 def processText(df):
-    df['jobDetails'].str.lower()
-    df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
+    df['jobDetails'] = df['jobDetails'].str.lower()
+    df['jobDetails'] = df['jobDetails'].astype(str)
+
+    df['tokens'] = df['jobDetails'].apply(word_tokenize) 
+    
+    # df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
     
     df['sentences'] = df.apply(lambda row: sent_tokenize(row['jobDetails']), axis=1)
     
@@ -96,8 +98,6 @@ def processText(df):
     df['tokens'] = df.apply(lambda row: word_tokenize(row['jobDetails']), axis=1)
     # tokenized string
     df['tokenized'] = df['jobDetails'].map(lambda x: x.translate(str.maketrans('', '',string.punctuation)))
-    
-    
 
     stops = set(stopwords.words('english'))
     lemmatizer = WordNetLemmatizer()
@@ -108,9 +108,10 @@ def processText(df):
         listNoStops.append(noStopwords)
         
     df['noStopsLemmatize'] = listNoStops
+    
     return df
 
-# 
+
 def frequencyDistribution(df): 
     allData = []
     for listWords in df['noStopsLemmatize']:
@@ -159,35 +160,44 @@ def analyzeJobDescription(df):
 def readAllData():
     # https://stackoverflow.com/questions/13131497/os-walk-to-crawl-through-folder-structure
     # https://stackoverflow.com/questions/68291894/read-all-csv-files-within-the-folder-without-having-a-fixed-name
-    allDfs = []
+    # allDfs = []
+    df = pd.read_csv("uxr-jobs.csv")
+    some = df
     for root, dirs, _ in os.walk("."):
         for d in dirs:
             files = [os.path.join(root, d, f) for f in os.listdir(os.path.join(root, d)) if f.endswith(".csv")]
             if len(files)>0:
                 for f in files:
-                    pdb.set_trace()
-                    df = pd.read_csv("data/long-col.csv")
-                    allDfs.append(df)
-    # todo
-    # at this point, allDfs = a list of dataframes
-    # but once I have a SINGLE df
-    # I need to save it to CSV so I don't re-do this every time I run the code lolol
-    # then this file will be done once I: 
-    return processText(df)
+                    some = pd.read_csv(f)
+                    df = pd.concat([df, some]).reset_index(drop=True)
+    
+    df.to_csv('pre-processing-all-data.csv')
 
+    df = processText(df)
+    df.to_csv('post-processing-all-data.csv') 
+    
+    # to create data/lat-long-uxr-jobs.csv:
+    df = cleanMapData(df)
+    df.to_csv('lat-long-all-data.csv')
+
+    return df
 
 
 def main():
-    fullDataFrame = readAllData()
-    commaFile = 'data/uxr-jobs.csv'
-    miniDf = pd.read_csv(commaFile)
-#     analyzeJobDescription(miniDf)
+    # for just 25 jobs & their details: 
+    # miniDf = pd.read_csv('data/uxr-jobs.csv')
     
-    # to create data/lat-long-uxr-jobs.csv:
-    # miniDf = cleanMapData(miniDf, commaFile)
-    miniDf = processText(miniDf)
-    # visualize(miniDf, "linkedinmap")
-    analyzeJobDescription(miniDf)
+    # to read all CSVs here: 
+    # df = readAllData()
+    
+    # read-old-data
+    df = pd.read_csv('lat-long-all-data.csv')
+    
+    # make map in US
+    visualize(df, "linkedinmap.html")
+    
+    # run analysis of job decriptions
+    analyzeJobDescription(df)
 
     
 main()
