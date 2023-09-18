@@ -122,8 +122,9 @@ def getJobInfo(dataDate, eachCard):
         numApplicants, allCriteria, jobDetails, allCriteriaTitles, allCriteriaDetails  = saveJobDetails(jobURL, fileName)
     except:
         print("mising some details (numApplicants, active, listDateListed, allCriteria, jobDetails) but returning partial jobInfo: ")
-        df = pd.DataFrame([[miniJobURL, jobTitle, companyName, location, "", [], [], [], ""]], columns=["miniJobURL", "jobTitle", "companyName", "location", "numApplicants", "active", "listDateListed", "allCriteria", "jobDetails"])
-        return df
+        return pd.DataFrame([[miniJobURL, jobTitle, companyName, location, "", [], [], "", "", "", "", ""]], columns=["miniJobURL", "jobTitle", "companyName", "location", "numApplicants", "active", "listDateListed", "seniority", "employmentType", "jobFunction", "industries", "jobDetails"])
+    
+    
 
     
     # actively hiring? 
@@ -138,11 +139,29 @@ def getJobInfo(dataDate, eachCard):
         listDateListed = listDateListed['datetime']
     else:
         listDateListed = ''
+        
+    return getDataFrame(miniJobURL, jobTitle, companyName, location, numApplicants, active, listDateListed, allCriteria, jobDetails, allCriteriaTitles, allCriteriaDetails)
     
-    # to save in dataframe: 
-    # note that allCriteria is a list of tuples!!
-    df = pd.DataFrame([[miniJobURL, jobTitle, companyName, location, numApplicants, active, listDateListed, allCriteria, jobDetails]], columns=["miniJobURL", "jobTitle", "companyName", "location", "numApplicants", "active", "listDateListed", "allCriteria", "jobDetails"])
-    return df
+    
+def getDataFrame(miniJobURL, jobTitle, companyName, location, numApplicants, active, listDateListed, allCriteria, jobDetails, allCriteriaTitles, allCriteriaDetails): 
+    seniority = None
+    employmentType = None
+    jobFunction = None
+    industries = None
+    for criteria in allCriteria:
+        if criteria[0] == 'Seniority level':
+            seniority = criteria[1]
+        elif criteria[0] == 'Employment type':
+            employmentType = criteria[1]
+        elif criteria[0] == 'Job function':
+            jobFunction = criteria[1]
+        elif criteria[0] == 'Industries':
+            industries = criteria[1]
+        else:
+            print("\n/n\n/n CRITERIA", allCriteria)
+            assert True, "error"
+    
+    return pd.DataFrame([[miniJobURL, jobTitle, companyName, location, numApplicants, active, listDateListed, seniority, employmentType, jobFunction, industries, jobDetails]], columns=["miniJobURL", "jobTitle", "companyName", "location", "numApplicants", "active", "listDateListed", "seniority", "employmentType", "jobFunction", "industries", "jobDetails"])
         
         
 def saveJobDetails(jobURL, fileName):
