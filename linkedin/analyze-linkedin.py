@@ -281,7 +281,10 @@ def cleanJobTitles(df):
     df['jobTitle'] = df['jobTitle'].apply(lambda x: re.sub('\d+', '', x))
             
     messyJobTitles = df['jobTitle'].str.findall(r'\([^()]*\)').sum()
+    
     assert len(messyJobTitles)==0, "unable to remove brackets and/or parenthesis"
+    
+    return df
     
     
 def visJobTitle(df):
@@ -301,8 +304,10 @@ def main():
     df = pd.read_csv('lat-long-all-data.csv')
     
     # testing
-    df = cleanAdjectives(df)
-    df.to_csv('with-criteria-all-data.csv')
+#    df = cleanAdjectives(df)
+#    df.to_csv('with-criteria-all-data.csv')
+#    df = cleanJobTitles(df)
+#    df.to_csv('2023-09-16-saturday.csv')
     # make map in US
     # visualize(df, "linkedinmap.html")
     
