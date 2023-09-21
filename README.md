@@ -2,6 +2,11 @@
 
 ## LinkedIn
 ### Graphing the number of open jobs (manually collected)
+### Terminal setup
+1. `sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
+2. view themes on: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes; I usually pick `geoffgarside`
+
+
 #### Data set up of `long-col.csv`
 1. Columns: `Job type,	Date,	Openings`
 2. Rows:
