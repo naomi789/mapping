@@ -14,16 +14,19 @@ from pprint import pprint
 # os._exit(0)
 # pdb.set_trace()
 
-def getInfo(dataDate, fileName):
+def getInfo(dataDate, fileName, location):
     global timeSinceLastGetHTML
     global numGetHTMLCalls
     startViewingJobNum = 1
-    shortURL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20researcher&location=United%20States&refresh=true&sortBy=N"
-    # Seattle only entry-level and associate
     
-    # Seattle only
-    # https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20researcher&location=Seattle&refresh=true&sortBy=N
-    # "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?currentJobId=3590113942&f_T=14292&f_WT=2&geoId=103644278&keywords=ux%20researcher&location=United%20States&refresh=true&sortBy=R&start="
+    if location == 'Seattle, WA':
+        shortURL = 'https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20researcher&location=Seattle&refresh=true&sortBy=N'
+    elif location == 'United States':
+        shortURL = 'https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20researcher&location=United%20States&refresh=true&sortBy=N'
+    elif location == 'Germany':
+        shortURL = 'https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=ux%20research&location=Germany&refresh=true&sortBy=N'
+    else:
+        assert True, "bad location call from main()"
     cont = True
     
     # continue doing this until we run out of jobs to look at 
@@ -241,14 +244,14 @@ def saveInfo(df, dataDate, fileName):
     df.to_csv(fileName)
 
 
-def scrapeWeb(dataDate, fileName):
+def scrapeWeb(dataDate, fileName, location):
     global timeSinceLastGetHTML
     global numGetHTMLCalls
     numGetHTMLCalls = 0
     timeSinceLastGetHTML = datetime.datetime.now()
     # TODO PAUSE ONCE RUN ONCE PER DAY
     # time.ctime(os.path.getmtime(file))
-    getInfo(dataDate, fileName)
+    getInfo(dataDate, fileName, location)
     df = readInfo(dataDate, fileName)
     saveInfo(df, dataDate, fileName.partition(".")[0] + '.csv')
 
@@ -259,8 +262,9 @@ def main():
     # dataDate = '2023-05-17'
     # 2023-05-17-uxr-jobs.html
     fileName = 'uxr-jobs.html'
-    commaFile = fileName.partition(".")[0]+'.csv'
-    scrapeWeb(dataDate, fileName)
-    
+    # commaFile = fileName.partition(".")[0]+'.csv'
+    scrapeWeb(dataDate, 'usa-uxr-jobs.html', 'United States')
+    scrapeWeb(dataDate, 'sea-uxr-jobs.html', 'Seattle, WA')
+    scrapeWeb(dataDate, 'deu-uxr-jobs.html', 'Germany')
     
 main()
