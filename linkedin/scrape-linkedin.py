@@ -152,13 +152,13 @@ def getDataFrame(miniJobURL, jobTitle, companyName, location, numApplicants, act
     jobFunction = None
     industries = None
     for criteria in allCriteria:
-        if criteria[0] == 'Seniority level':
+        if criteria[0] == 'Seniority level' | criteria[0] == 'Karrierestufe':
             seniority = criteria[1]
-        elif criteria[0] == 'Employment type':
+        elif criteria[0] == 'Employment type' | criteria[0] == 'Beschäftigungsverhältnis':
             employmentType = criteria[1]
-        elif criteria[0] == 'Job function':
+        elif criteria[0] == 'Job function' | criteria[0] == 'Tätigkeitsbereich':
             jobFunction = criteria[1]
-        elif criteria[0] == 'Industries':
+        elif criteria[0] == 'Industries' | criteria[0] == 'Branchen':
             industries = criteria[1]
         else:
             print("\n/n\n/n CRITERIA", allCriteria)
