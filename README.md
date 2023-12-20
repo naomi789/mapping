@@ -22,7 +22,7 @@ UXR; Seattle, WA, USA; Entry level
 UXR; USA`
 
 #### Terminal set up for `manual-linkedin.py`
-1. Add `long-col.csv` within `quant/linkedin/` 
+1. Add `long-col.csv` within `quant/linkedin/data/` 
 2. Set up Python3 and pip
 3. `pip3 install pandas` (or pip)
 4. `pip3 install plotly`
